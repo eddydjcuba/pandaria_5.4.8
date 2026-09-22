@@ -6,7 +6,9 @@ param(
 
     [int]$Threads = 2,
 
-    [string]$Locale = ''
+    [string]$Locale = '',
+
+    [switch]$Force
 )
 
 $ErrorActionPreference = 'Stop'
@@ -14,6 +16,37 @@ $ErrorActionPreference = 'Stop'
 $clientPath = (Resolve-Path $ClientDir).Path
 $serverPath = (Resolve-Path $ServerDir).Path
 $dataPath = Join-Path $serverPath 'Data'
+
+function Get-ClientVersion {
+    param([string]$Path)
+
+    $buildInfo = Join-Path $Path '.build.info'
+    if (Test-Path $buildInfo) {
+        $lines = Get-Content -LiteralPath $buildInfo | Select-Object -First 2
+        if ($lines.Count -ge 2) {
+            $headers = $lines[0] -split '\|' | ForEach-Object { ($_ -split '!')[0] }
+            $line = $lines[1]
+            $parts = $line -split '\|'
+            $versionIndex = [Array]::IndexOf($headers, 'Version')
+            if ($versionIndex -ge 0 -and $parts.Count -gt $versionIndex) {
+                return $parts[$versionIndex]
+            }
+        }
+    }
+
+    $wowExe = Get-ChildItem -LiteralPath $Path -Recurse -File -Include 'Wow.exe', 'Wow-64.exe' -ErrorAction SilentlyContinue |
+        Select-Object -First 1
+    if ($wowExe) {
+        return $wowExe.VersionInfo.ProductVersion
+    }
+
+    return ''
+}
+
+$clientVersion = Get-ClientVersion -Path $clientPath
+if (-not $Force -and $clientVersion -and -not $clientVersion.StartsWith('5.4.8')) {
+    throw "Client version '$clientVersion' is not WoW 5.4.8. Use a matching Pandaria 5.4.8 client, or pass -Force if you are certain."
+}
 
 foreach ($tool in @('mapextractor.exe', 'vmap4extractor.exe', 'vmap4assembler.exe', 'mmaps_generator.exe')) {
     $source = Join-Path $serverPath $tool

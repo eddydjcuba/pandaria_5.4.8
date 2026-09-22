@@ -60,6 +60,7 @@ To replace the local Legion processes on the same ports, run the switch helper
 after the client data folders exist:
 
 ```powershell
+.\contrib\windows\Test-PandariaReadiness.ps1
 .\contrib\windows\Switch-FromLegionToPandaria.ps1
 ```
 
