@@ -8,6 +8,9 @@ param(
 $ErrorActionPreference = 'Stop'
 
 $legionPath = [System.IO.Path]::GetFullPath($LegionServerDir)
+$readiness = Join-Path $PandariaRepoDir 'contrib\windows\Test-PandariaReadiness.ps1'
+& $readiness -RepoDir $PandariaRepoDir -AuthPort $AuthPort -WorldPort $WorldPort
+if ($LASTEXITCODE -ne 0) { throw 'Pandaria readiness check failed. Legion was not stopped.' }
 
 Get-CimInstance Win32_Process |
     Where-Object {
@@ -19,15 +22,6 @@ Get-CimInstance Win32_Process |
         Write-Host "Stopping Legion $($_.Name) PID $($_.ProcessId)"
         Stop-Process -Id $_.ProcessId -Force
     }
-
-$dataDir = Join-Path $PandariaRepoDir 'server\Data'
-$requiredData = @('maps', 'vmaps', 'mmaps')
-foreach ($name in $requiredData) {
-    $path = Join-Path $dataDir $name
-    if (-not (Test-Path $path)) {
-        throw "Pandaria data folder missing: $path. Run Extract-PandariaData.ps1 before switching."
-    }
-}
 
 & (Join-Path $PandariaRepoDir 'contrib\windows\Start-Pandaria.ps1') `
     -ServerDir (Join-Path $PandariaRepoDir 'server') `
