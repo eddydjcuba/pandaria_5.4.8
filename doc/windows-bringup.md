@@ -41,13 +41,30 @@ Important values:
 
 - `LoginDatabaseInfo`, `WorldDatabaseInfo`, `CharacterDatabaseInfo`
 - `DataDir = "Data"`
-- `RealmServerPort = 3724`
+- `RealmServerPort = 1119`
 - `WorldServerPort = 8085`
 
 Start the realm:
 
 ```powershell
 .\contrib\windows\Start-Pandaria.ps1
+```
+
+## Extract client data without saturating the CPU
+
+Use a WoW 5.4.8 client that matches this core. The helper copies the extractor
+tools into the client directory and keeps the expensive mmap phase to two
+threads by default:
+
+```powershell
+.\contrib\windows\Extract-PandariaData.ps1 -ClientDir "D:\Games\World of Warcraft 5.4.8" -ServerDir .\server -Threads 2
+```
+
+If the client is Spanish, pass the locale and set the matching `DBC.Locale` in
+`worldserver.conf` after extraction:
+
+```powershell
+.\contrib\windows\Extract-PandariaData.ps1 -ClientDir "D:\Games\World of Warcraft 5.4.8" -ServerDir .\server -Threads 2 -Locale esES
 ```
 
 If the client is not on the same machine, update `auth.realmlist` so `address`

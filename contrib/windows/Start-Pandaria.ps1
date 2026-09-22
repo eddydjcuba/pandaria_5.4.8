@@ -1,6 +1,6 @@
 param(
     [string]$ServerDir = (Resolve-Path (Join-Path $PSScriptRoot '..\..\server')).Path,
-    [int]$AuthPort = 3724,
+    [int]$AuthPort = 1119,
     [int]$WorldPort = 8085
 )
 
