@@ -74,7 +74,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'vmap4extractor failed.' }
 
     Write-Host 'Assembling vmaps...'
-    & '.\vmap4assembler.exe' 'Buildings' (Join-Path $dataPath 'vmaps') '--threads' $Threads
+    & '.\vmap4assembler.exe' 'Buildings' (Join-Path $dataPath 'vmaps')
     if ($LASTEXITCODE -ne 0) { throw 'vmap4assembler failed.' }
 }
 finally {
@@ -82,8 +82,14 @@ finally {
 }
 
 Write-Host "Generating mmaps with $Threads thread(s). This is the long CPU-heavy step."
-& (Join-Path $clientPath 'mmaps_generator.exe') '--input' $dataPath '--output' $dataPath '--threads' $Threads
-if ($LASTEXITCODE -ne 0) { throw 'mmaps_generator failed.' }
+Push-Location $dataPath
+try {
+    & (Join-Path $clientPath 'mmaps_generator.exe') '--threads' $Threads '--silent'
+    if ($LASTEXITCODE -ne 0) { throw 'mmaps_generator failed.' }
+}
+finally {
+    Pop-Location
+}
 
 Write-Host ''
 Write-Host "Extraction complete. worldserver.conf can stay at DataDir = `"Data`"."
