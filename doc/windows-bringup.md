@@ -50,6 +50,13 @@ Start the realm:
 .\contrib\windows\Start-Pandaria.ps1
 ```
 
+To replace the local Legion processes on the same ports, run the switch helper
+after the client data folders exist:
+
+```powershell
+.\contrib\windows\Switch-FromLegionToPandaria.ps1
+```
+
 ## Extract client data without saturating the CPU
 
 Use a WoW 5.4.8 client that matches this core. The helper copies the extractor
