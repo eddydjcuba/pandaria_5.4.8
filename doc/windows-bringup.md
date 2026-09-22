@@ -23,6 +23,12 @@ installs the runnable files into `server\`.
 
 ## First run in the target machine
 
+Install the three databases and the web compatibility columns:
+
+```powershell
+.\contrib\windows\Install-PandariaDatabase.ps1
+```
+
 Copy or generate the client data folders next to `worldserver.exe`:
 
 - `Data\dbc`
