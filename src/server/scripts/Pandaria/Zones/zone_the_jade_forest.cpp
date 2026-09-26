@@ -23,6 +23,7 @@
 #include "DBCStores.h"
 #include "Map.h"
 #include "MotionMaster.h"
+#include "Player.h"
 #include "TemporarySummon.h"
 #include "Vehicle.h"
 
@@ -4982,7 +4983,12 @@ public:
             });
         }
         else
+        {
+            if (Player* player = passenger->ToPlayer())
+                player->SetFallInformation(0, player->GetPositionZ());
+
             passenger->SetDisableGravity(false);
+        }
     }
 
     void MovementInform(uint32 type, uint32 pointId) override
