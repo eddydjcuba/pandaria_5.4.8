@@ -4937,6 +4937,7 @@ enum RappellingRopeData
     SPELL_REVERSE_CAST_RIDE_SEAT_1  = 85299,
     SPELL_RAPPELLING_ROPE_AURA      = 130970,
     SPELL_PARACHUTE                 = 45472,
+    SPELL_PARACHUTE_BUFF            = 44795,
     POINT_RAPPELLING_DESTINATION    = 1,
 };
 
@@ -4967,6 +4968,7 @@ public:
             passenger->SetDisableGravity(true);
             if (Player* player = passenger->ToPlayer())
             {
+                player->CastSpell(player, SPELL_PARACHUTE_BUFF, true);
                 player->SetFeatherFall(true);
                 player->SetFallInformation(0, player->GetPositionZ());
             }
@@ -4990,6 +4992,13 @@ public:
         }
         else
         {
+            if (Player* player = passenger->ToPlayer())
+            {
+                player->CastSpell(player, SPELL_PARACHUTE_BUFF, true);
+                player->SetFeatherFall(true);
+                player->SetFallInformation(0, player->GetPositionZ());
+            }
+
             passenger->SetDisableGravity(false);
             if (passenger->GetGUID() == _passengerGUID)
                 _passengerGUID = 0;
@@ -5017,6 +5026,7 @@ public:
         if (Player* player = passenger ? passenger->ToPlayer() : nullptr)
         {
             player->SetFeatherFall(true);
+            player->CastSpell(player, SPELL_PARACHUTE_BUFF, true);
             me->CastSpell(player, SPELL_PARACHUTE, true);
             player->SetFallInformation(0, player->GetPositionZ());
         }
@@ -5030,6 +5040,7 @@ public:
             player->SetDisableGravity(false);
             player->SetFeatherFall(true);
             player->NearTeleportTo(landing.GetPositionX(), landing.GetPositionY(), landing.GetPositionZ(), player->GetOrientation());
+            player->CastSpell(player, SPELL_PARACHUTE_BUFF, true);
             player->CastSpell(player, SPELL_PARACHUTE, true);
             player->SetFallInformation(0, landing.GetPositionZ());
         }
